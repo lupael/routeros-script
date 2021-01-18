@@ -1,10 +1,6 @@
 RouterOS Scripts
 ================
 
-[![GitHub forks](https://img.shields.io/github/forks/eworm-de/routeros-scripts?style=social)](https://github.com/eworm-de/routeros-scripts/network)
-[![GitHub stars](https://img.shields.io/github/stars/eworm-de/routeros-scripts?style=social)](https://github.com/eworm-de/routeros-scripts/stargazers)
-[![GitHub watchers](https://img.shields.io/github/watchers/eworm-de/routeros-scripts?style=social)](https://github.com/eworm-de/routeros-scripts/watchers)
-
 [RouterOS](https://mikrotik.com/software) is the operating system developed
 by [MikroTik](https://mikrotik.com/aboutus) for networking tasks. This
 repository holds a number of [scripts](https://wiki.mikrotik.com/wiki/Manual:Scripting)
@@ -31,12 +27,6 @@ If you know how things work just copy and paste the
 `global-config-overlay`!
 First time users should take the long way below.
 
-### Live presentation
-
-Want to see it in action? I've had a presentation [Repository based
-RouterOS script distribution](https://www.youtube.com/watch?v=B9neG3oAhcY)
-including demonstation recorded live at [MUM Europe
-2019](https://mum.mikrotik.com/2019/EU/) in Vienna.
 
 *Be warned!* Some details changed. So see the presentation, then follow
 the steps below for up-to-date commands.
@@ -193,49 +183,8 @@ Available Scripts
 [comment]: # (* learn-mac-based-vlan)
 [comment]: # (* manage-umts)
 
-Contribute
-----------
 
-Thanks a lot for [past contributions](CONTRIBUTIONS.md)!
 
-### Patches, issues and whishlist
-
-Feel free to contact me via e-mail or open an
-[issue at github](https://github.com/eworm-de/routeros-scripts/issues).
-
-### Donate
-
-This project is developed in private spare time and usage is free of charge
-for you. If you like the scripts and think this is of value for you or your
-business please consider to
-[donate with PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A4ZXBD6YS2W8J).
-
-[![donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A4ZXBD6YS2W8J)
-
-Thanks a lot for your support!
-
-License and warranty
---------------------
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-[GNU General Public License](COPYING.md) for more details.
-
-Upstream
---------
-
-URL:
-[GitHub.com](https://github.com/eworm-de/routeros-scripts#routeros-scripts)
-
-Mirror:
-[eworm.de](https://git.eworm.de/cgit/routeros-scripts/about/)
-[GitLab.com](https://gitlab.com/eworm-de/routeros-scripts#routeros-scripts)
 
 ---
 [▲ Go back to top](#top)
