@@ -1,0 +1,6 @@
+#!rsc by RouterOS
+# RouterOS script: script-updates
+
+:global LogPrintExit;
+
+$LogPrintExit warning ("This script has been replaced by function '\$ScriptInstallUpdate'.") true;

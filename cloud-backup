@@ -1,0 +1,40 @@
+#!rsc by RouterOS
+# RouterOS script: cloud-backup
+# Copyright (c) 2013-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# upload backup to MikroTik cloud
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/cloud-backup.md
+
+:global BackupPassword;
+:global Identity;
+
+:global DeviceInfo;
+:global LogPrintExit;
+:global SendNotification;
+:global SymbolForNotification;
+
+:do {
+  # we are not interested in output, but print is
+  # required to fetch information from cloud
+  / system backup cloud print as-value;
+  :if ([ :len [ / system backup cloud find ] ] > 0) do={
+    / system backup cloud upload-file action=create-and-upload \
+        password=$BackupPassword replace=[ get ([ find ]->0) name ];
+  } else={
+    / system backup cloud upload-file action=create-and-upload \
+        password=$BackupPassword;
+  }
+  :local Cloud [ / system backup cloud get ([ find ]->0) ];
+
+  $SendNotification ([ $SymbolForNotification "floppy-disk" ] . "Cloud backup") \
+    ("Uploaded backup for " . $Identity . " to cloud.\n\n" . \
+      [ $DeviceInfo ] . "\n\n" . \
+      "Name:           " . $Cloud->"name" . "\n" . \
+      "Size:           " . $Cloud->"size" . " B (" . ($Cloud->"size" / 1024) . " KiB)\n" . \
+      "Download key:   " . $Cloud->"secret-download-key") "" "" "true";
+} on-error={
+  $SendNotification ([ $SymbolForNotification "warning-sign" ] . "Cloud backup failed") \
+      ("Failed uploading backup for " . $Identity . " to cloud!\n\n" . [ $DeviceInfo ]);
+  $LogPrintExit error ("Failed uploading backup for " . $Identity . " to cloud!") true;
+}

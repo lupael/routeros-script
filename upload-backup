@@ -1,0 +1,79 @@
+#!rsc by RouterOS
+# RouterOS script: upload-backup
+# Copyright (c) 2013-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# create and upload backup and config file
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/upload-backup.md
+
+:global BackupPassword;
+:global BackupSendBinary;
+:global BackupSendExport;
+:global BackupUploadPass;
+:global BackupUploadUrl;
+:global BackupUploadUser;
+:global Domain;
+:global Identity;
+
+:global CharacterReplace;
+:global DeviceInfo;
+:global IfThenElse;
+:global LogPrintExit;
+:global SendNotification;
+:global SymbolForNotification;
+:global WaitForFile;
+
+:if ($BackupSendBinary != true && \
+     $BackupSendExport != true) do={
+  $LogPrintExit error ("Configured to send neither backup nor config export.") true;
+}
+
+# filename based on identity
+:local FileName [ $CharacterReplace ($Identity . "." . $Domain) "." "_" ];
+:local BackupFile "none";
+:local ConfigFile "none";
+:local Failed 0;
+
+# binary backup
+:if ($BackupSendBinary = true) do={
+  / system backup save encryption=aes-sha256 name=$FileName password=$BackupPassword;
+  $WaitForFile ($FileName . ".backup");
+
+  :do {
+    / tool fetch upload=yes url=($BackupUploadUrl . "/" . $FileName . ".backup") \
+        user=$BackupUploadUser password=$BackupUploadPass src-path=($FileName . ".backup");
+    :set BackupFile ($FileName . ".backup");
+  } on-error={
+    $LogPrintExit error ("Uploading backup file failed!") false;
+    :set BackupFile "failed";
+    :set Failed 1;
+  }
+}
+
+# create configuration export
+:if ($BackupSendExport = true) do={
+  / export terse file=$FileName;
+  $WaitForFile ($FileName . ".rsc");
+
+  :do {
+    / tool fetch upload=yes url=($BackupUploadUrl . "/" . $FileName . ".rsc") \
+        user=$BackupUploadUser password=$BackupUploadPass src-path=($FileName . ".rsc");
+    :set ConfigFile ($FileName . ".rsc");
+  } on-error={
+    $LogPrintExit error ("Uploading configuration export failed!") false;
+    :set ConfigFile "failed";
+    :set Failed 1;
+  }
+}
+
+$SendNotification [ $IfThenElse ($Failed > 0) \
+    ([ $SymbolForNotification "warning-sign" ] . "Backup & Config upload with failure") \
+    ([ $SymbolForNotification "floppy-disk" ] . "Backup & Config upload") ] \
+    ("Backup and config export upload for " . $Identity . ".\n\n" . \
+    [ $DeviceInfo ] . "\n\n" . \
+    "Backup file:    " . $BackupFile . "\n" . \
+    "Config file:    " . $ConfigFile) "" "" "true";
+
+:if ($Failed = 1) do={
+  :error "An error occured!";
+}

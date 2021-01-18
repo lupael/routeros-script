@@ -1,0 +1,51 @@
+#!rsc by RouterOS
+# RouterOS script: capsman-download-packages
+# Copyright (c) 2018-2021 Christian Hesse <mail@eworm.de>
+#                         Michael Gisbers <michael@gisbers.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# download and cleanup packages for CAP installation from CAPsMAN
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/capsman-download-packages.md
+
+:global CleanFilePath;
+:global DownloadPackage;
+:global LogPrintExit;
+:global MkDir;
+:global ScriptLock;
+:global WaitFullyConnected;
+
+$ScriptLock "capsman-download-packages";
+$WaitFullyConnected;
+
+:local PackagePath [ $CleanFilePath [ / caps-man manager get package-path ] ];
+:local InstalledVersion [ / system package update get installed-version ];
+:local Updated false;
+
+:if ([ :len [ / file find where name=$PackagePath type="directory" ] ] = 0) do={
+  $MkDir $PackagePath;
+  $LogPrintExit info ("Created directory at package path (" . $PackagePath . \
+    "). Please place your packages!") false;
+}
+
+:foreach Package in=[ / file find where type=package \
+      package-version!=$InstalledVersion name~("^" . $PackagePath) ] do={
+  :local File [ / file get $Package ];
+  :if ($File->"package-architecture" = "mips") do={
+    :set ($File->"package-architecture") "mipsbe";
+  }
+  :if ($File->"package-name" = "wireless@") do={
+    :set ($File->"package-name") "wireless";
+  }
+  :if ([ $DownloadPackage ($File->"package-name") $InstalledVersion ($File->"package-architecture") $PackagePath ] = true) do={
+    :set Updated true;
+    / file remove $Package;
+  }
+}
+
+:if ($Updated = true) do={
+  :if ([ :len [ / system script find where name="capsman-rolling-upgrade" ] ] > 0) do={
+    / system script run capsman-rolling-upgrade;
+  } else={
+    / caps-man remote-cap upgrade [ find where version!=$InstalledVersion ];
+  }
+}

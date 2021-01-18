@@ -1,0 +1,62 @@
+#!rsc by RouterOS
+# RouterOS script: sms-forward
+# Copyright (c) 2013-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# forward SMS to e-mail
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/sms-forward.md
+
+:global Identity;
+
+:global IfThenElse;
+:global LogPrintExit;
+:global MailServerIsUp;
+:global ScriptLock;
+:global SendNotification;
+:global SymbolForNotification;
+:global WaitFullyConnected;
+
+$ScriptLock "sms-forward";
+
+:if ([ / tool sms get receive-enabled ] = false) do={
+  $LogPrintExit warning "Receiving of SMS is not enabled." true;
+}
+
+$WaitFullyConnected;
+
+:if ([ $MailServerIsUp ] = false) do={
+  $LogPrintExit warning "Mail server is not up." true;
+}
+
+:local Settings [ / tool sms get ];
+
+# forward SMS in a loop
+:while ([ :len [ / tool sms inbox find ] ] > 0) do={
+  :local Phone [ / tool sms inbox get ([ find ]->0) phone ];
+  :local Messages "";
+  :local Delete [ :toarray "" ];
+
+  :foreach Sms in=[ / tool sms inbox find where phone=$Phone ] do={
+    :local SmsVal [ / tool sms inbox get $Sms ];
+
+    :if ($Phone = $Settings->"allowed-number" && \
+        ($SmsVal->"message")~("^:cmd " . $Settings->"secret" . " script ")) do={
+      $LogPrintExit debug ("Removing SMS, which started a script.") false;
+      / tool sms inbox remove $Sms;
+    } else={
+      :set Messages ($Messages . "\n\nOn " . $SmsVal->"timestamp" . \
+          " type " . $SmsVal->"type" . ":\n" . $SmsVal->"message");
+      :set Delete ($Delete, $Sms);
+    }
+  }
+
+  :if ([ :len $Messages ] > 0) do={
+    :local Count [ :len $Delete ];
+    $SendNotification ([ $SymbolForNotification "incoming-envelope" ] . "SMS Forwarding from " . $Phone) \
+        ("Received " . [ $IfThenElse ($Count = 1) "this message" ("these " . $Count . " messages") ] . \
+        " by " . $Identity . " from " . $Phone . ":" . $Messages);
+    :foreach Sms in=$Delete do={
+      / tool sms inbox remove $Sms;
+    }
+  }
+}

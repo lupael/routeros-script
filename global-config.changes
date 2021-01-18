@@ -1,0 +1,53 @@
+# RouterOS global-config changes
+# Copyright (c) 2019-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+
+# Changes for global-config to be added to notification on script updates
+:global GlobalConfigChanges {
+   1="Moved variables from 'global-config' to 'global-functions' for independence";
+   2="Variable names became CamelCase to work around scripting issues";
+   3="Variable for certificate renew passphrase became an array to support multiple passphrases";
+   4="Added option to ignore global-config changes";
+   5="Split off new script 'cloud-backup' from 'email-backup'";
+   6="Introduced script 'upload-backup' with new configuration parameters";
+   7="Introduced script 'check-health' with new configuration parameters";
+   8="Added donation hint and option to silence it";
+   9="Introduced configuration overlay 'global-config-overlay'";
+  10="Made health threshold for voltage configurable";
+  11="Introduced function '\$ScriptInstallUpdate' to install new and update existing scripts";
+  12="Removed '\$ScriptUpdatesConfigChangesIgnore', comment '\$GlobalConfigVersion' in 'global-config-overlay' to disable change notifications";
+  13="Configuration for script 'bridge-port-to-default' changed with new syntax in comment";
+  14="Dropped script 'script-updates', use '\$ScriptInstallUpdate' exclusively!";
+  15="New documentation is online! https://git.eworm.de/cgit/routeros-scripts/about/#available-scripts";
+  16="Happy with RouterOS Scripts and have a GitHub and/or GitLab account? Please star!";
+  17="Introduced script 'early-errors'";
+  18=("Added a simple IP calculation function, try: \$IPCalc " . [ / ip address get ([ find ]->0) address ]);
+  19="Commenting scripts with 'ignore', 'base-url=...' and 'url-suffix=...' is honored on update";
+  20="Added support for hooks to 'netwatch-notify'";
+  21="Added support for installing patch updates automatically by 'check-routeros-update'";
+  22="Dropped '\$ScriptUpdatesIgnore' from global configuration, auto-migrating to ignore flag in comment"
+  23="Added 'log-forward' with configurable filter, which replaces 'early-errors'";
+  24="Made symbols in notifications configurable.";
+  25="Added support for DHCP server name in DNS FQDN via '\$ServerNameInZone'";
+  26="Made check count threshold in 'netwatch-notify' configurable.";
+  27="Added queue for Telegram notifications to resend later on error.";
+  28="Made 'dhcp-to-dns' act on all bound leases, not just dynamic ones.";
+  29="Added filter on log message text for 'log-forward'.";
+  30="Implemented simple rate limit for 'log-forward' to prevent flooding.";
+  31="Switched Telegram notifications to fixed-width font, with opt-out.";
+  32="Merged mode (& reset) button scripts in single new script 'mode-button'.";
+  33="Added configurable deviation on health temperature recovery threshold against notification flooding.";
+  34="Introduced script 'ospf-to-leds' to visualize OSPF instance state via LEDs.";
+  35="Implemented visual feedback for 'mode-button' with configurable LED.";
+  36="Added support for installing updates automatically if seen in neighbor list.";
+  37="Implemented simple dependency model in 'netwatch-notify'.";
+  38="Imported new Let's Encrypt intermediate certificate 'R3'.";
+  39="Added support for interface specific address list entries in 'ipv6-update'.";
+  40="Made the certificate renewal time configurable.";
+  41="Implemented migration mechanism for script updates.";
+};
+
+# Migration steps to be applied on script updates
+:global GlobalConfigMigration {
+  41=":global SendNotification; \$SendNotification (\"Migration mechanism\") (\"Congratulations!\nSuccessfully tested the new migration mechanism.\");";
+};

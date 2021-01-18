@@ -1,0 +1,24 @@
+#!rsc by RouterOS
+# RouterOS script: sms-action
+# Copyright (c) 2018-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# run action on received SMS
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/sms-action.md
+
+:global SmsAction;
+
+:global LogPrintExit;
+
+:local Action $action;
+
+:if ([ :typeof $Action ] = "nothing") do={
+  $LogPrintExit error "This script is supposed to run from SMS hook with action=..." true;
+}
+
+:local Code ($SmsAction->$Action);
+:local Parsed [ :parse $Code ];
+
+:log info ("Acting on SMS action '" . $Action . "': " . $Code);
+:delay 1s;
+$Parsed;

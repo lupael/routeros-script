@@ -1,0 +1,95 @@
+#!rsc by RouterOS
+# RouterOS script: check-health
+# Copyright (c) 2019-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# check for RouterOS health state
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/check-health.md
+
+:global CheckHealthLast;
+:global CheckHealthTemperature;
+:global CheckHealthTemperatureDeviation;
+:global CheckHealthTemperatureNotified;
+:global CheckHealthVoltagePercent;
+:global Identity;
+
+:global LogPrintExit;
+:global SendNotification;
+:global SymbolForNotification;
+
+:local FormatVoltage do={
+  :local Voltage [ :tonum $1 ];
+  :return (($Voltage / 10) . "." . [ :pick $Voltage ([ :len $Voltage ] - 1) ] . "V");
+}
+
+:local CheckHealthCurrent [ / system health get ];
+
+:if ([ :len $CheckHealthCurrent ] = 0) do={
+  $LogPrintExit error ("Your device does not provide any health values.") true;
+}
+
+:if ([ :typeof $CheckHealthTemperatureNotified ] != "array") do={
+  :set CheckHealthTemperatureNotified [ :toarray "" ];
+}
+
+:foreach Name,Voltage in=$CheckHealthCurrent do={
+  :if ($Name ~ "(battery|voltage)" && \
+       [ :typeof ($CheckHealthLast->$Name) ] = "num" && \
+       [ :typeof $Voltage ] = "num") do={
+    :if ($CheckHealthLast->$Name * (100 + $CheckHealthVoltagePercent) < $Voltage * 100 || \
+         $CheckHealthLast->$Name * 100 > $Voltage * (100 + $CheckHealthVoltagePercent)) do={
+      $SendNotification ([ $SymbolForNotification "high-voltage-sign" ] . "Health warning: " . $Name) \
+          ("The " . $Name . " on " . $Identity . " jumped more than " . $CheckHealthVoltagePercent . "%.\n\n" . \
+          "old value: " . [ $FormatVoltage ($CheckHealthLast->$Name) ] . "\n" . \
+          "new value: " . [ $FormatVoltage $Voltage ]);
+    }
+  }
+}
+
+:foreach Name,PSU in=$CheckHealthCurrent do={
+  :if ($Name ~ "psu.*-state" && \
+       [ :typeof ($CheckHealthLast->$Name) ] = "str" && \
+       [ :typeof $PSU ] = "str") do={
+    :if ($CheckHealthLast->$Name = "ok" && \
+         $PSU != "ok") do={
+      $SendNotification ([ $SymbolForNotification "cross-mark" ] . "Health warning: " . $Name) \
+          ("The power supply unit '" . $Name . "' on " . $Identity . " failed!");
+    }
+    :if ($CheckHealthLast->$Name != "ok" && \
+         $PSU = "ok") do={
+      $SendNotification ([ $SymbolForNotification "white-heavy-check-mark" ] . "Health recovery: " . $Name) \
+          ("The power supply unit '" . $Name . "' on " . $Identity . " recovered!");
+    }
+  }
+}
+
+:foreach Name,Temperature in=$CheckHealthCurrent do={
+  :if ($Name ~ "temperature" && \
+       [ :typeof $Temperature ] = "num") do={
+    :if ([ :typeof ($CheckHealthTemperature->$Name) ] != "num" ) do={
+      $LogPrintExit info ("No threshold given for " . $Name . ", assuming 50C.") false;
+      :set ($CheckHealthTemperature->$Name) 50;
+    }
+    :local Validate [ / system health get $Name ];
+    :while ($Temperature != $Validate) do={
+      :set Temperature $Validate;
+      :set Validate [ / system health get $Name ];
+    }
+    :if ($Temperature > $CheckHealthTemperature->$Name && \
+         $CheckHealthTemperatureNotified->$Name != true) do={
+      $SendNotification ([ $SymbolForNotification "fire" ] . "Health warning: " . $Name) \
+          ("The " . $Name . " on " . $Identity . " is above threshold: " . \
+          $Temperature . "\C2\B0" . "C");
+      :set ($CheckHealthTemperatureNotified->$Name) true;
+    }
+    :if ($Temperature <= ($CheckHealthTemperature->$Name - $CheckHealthTemperatureDeviation) && \
+         $CheckHealthTemperatureNotified->$Name = true) do={
+      $SendNotification ([ $SymbolForNotification "white-heavy-check-mark" ] . "Health recovery: " . $Name) \
+          ("The " . $Name . " on " . $Identity . " dropped below threshold: " .  \
+          $Temperature . "\C2\B0" . "C");
+      :set ($CheckHealthTemperatureNotified->$Name) false;
+    }
+  }
+}
+
+:set CheckHealthLast $CheckHealthCurrent;

@@ -1,0 +1,31 @@
+#!rsc by RouterOS
+# RouterOS script: ppp-on-up
+# Copyright (c) 2013-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# run scripts on ppp up
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/ppp-on-up.md
+
+:global LogPrintExit;
+
+:local Interface $interface;
+
+:if ([ :typeof $Interface ] = "nothing") do={
+  $LogPrintExit error "This script is supposed to run from ppp on-up script hook." true;
+}
+
+:local IntName [ / interface get $Interface name ];
+:log info ("PPP interface " . $IntName . " is up.");
+
+/ ipv6 dhcp-client release [ find where interface=$IntName !disabled ];
+
+:local Scripts {
+  "update-tunnelbroker"
+}
+
+:foreach Script in=$Scripts do={
+  :if ([ :len [ / system script find where name=$Script ] ] > 0) do={
+    :log debug ("Running script from ppp-on-up: " . $Script);
+    / system script run $Script;
+  }
+}

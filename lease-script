@@ -1,0 +1,49 @@
+#!rsc by RouterOS
+# RouterOS script: lease-script
+# Copyright (c) 2013-2021 Christian Hesse <mail@eworm.de>
+# https://git.eworm.de/cgit/routeros-scripts/about/COPYING.md
+#
+# run scripts on DHCP lease
+# https://git.eworm.de/cgit/routeros-scripts/about/doc/lease-script.md
+
+:global LogPrintExit;
+
+:if ([ :typeof $leaseActIP ] = "nothing" || \
+     [ :typeof $leaseActMAC ] = "nothing" || \
+     [ :typeof $leaseServerName ] = "nothing" || \
+     [ :typeof $leaseBound ] = "nothing") do={
+  $LogPrintExit error "This script is supposed to run from ip dhcp-server." true;
+}
+
+:local Scripts;
+:local ScriptsAssign {
+  "dhcp-to-dns";
+  "collect-wireless-mac.local";
+  "dhcp-lease-comment.local";
+  "collect-wireless-mac.capsman";
+  "dhcp-lease-comment.capsman"
+}
+:local ScriptsDeAssign {
+  "dhcp-to-dns"
+}
+
+:local State "";
+:if ($leaseBound = 0) do={
+  :set State "de";
+  :set Scripts $ScriptsDeAssign;
+} else={
+  :set Scripts $ScriptsAssign;
+}
+
+:log debug ("DHCP Server " . $leaseServerName . " " . \
+    $State . "assigned lease " . $leaseActIP . " to " . $leaseActMAC);
+
+# delay a moment to update the lease table, do not run in parallel for de/assign
+:delay ((1 + $leaseBound) . "s");
+
+:foreach Script in=$Scripts do={
+  :if ([ :len [ / system script find where name=$Script ] ] > 0) do={
+    :log debug ("Running script from lease-script: " . $Script);
+    / system script run $Script;
+  }
+}
