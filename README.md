@@ -80,7 +80,7 @@ crap and a good example how to *not* do it.
 
 Now let's download the main scripts and add them in configuration on the fly.
 
-    [admin@MikroTik] > :foreach Script in={ "global-config"; "global-config-overlay"; "global-functions" } do={ / system script add name=$Script source=([ / tool fetch check-certificate=yes-without-crl ("https://git.eworm.de/cgit/routeros-scripts/plain/" . $Script) output=user as-value]->"data"); }
+    [admin@MikroTik] > :foreach Script in={ "global-config"; "global-config-overlay"; "global-functions" } do={ / system script add name=$Script source=([ / tool fetch check-certificate=yes-without-crl ("https://github.com/lupael/routeros-script.git" . $Script) output=user as-value]->"data"); }
 
 Mark `global-config-overlay` not to be overwritten by future updates.
 
