@@ -1,34 +1,33 @@
-Run scripts on ppp connection
-=============================
+# Run scripts on ppp connection
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
-This script is supposed to run on established ppp connection. Currently
-it does:
+This script is supposed to run on established ppp connection. Currently it does:
 
-* release IPv6 dhcp leases (and thus force a renew)
+* release IPv6 dhcp leases \(and thus force a renew\)
 * run [update-tunnelbroker](update-tunnelbroker.md)
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script:
 
-    $ScriptInstallUpdate ppp-on-up;
+```text
+$ScriptInstallUpdate ppp-on-up;
+```
 
 ... and make it the `on-up` script for ppp profile:
 
-    / ppp profile set on-up=ppp-on-up [ find ];
+```text
+/ ppp profile set on-up=ppp-on-up [ find ];
+```
 
-See also
---------
+## See also
 
 * [Update configuration on IPv6 prefix change](ipv6-update.md)
 * [Update tunnelbroker configuration](update-tunnelbroker.md)
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](ppp-on-up.md#top)
+

@@ -1,47 +1,39 @@
-Renew locally issued certificates
-=================================
+# Renew locally issued certificates
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
-This script renews certificates issued by a local certificate authority (CA).
-Optionally the certificates are exported with individual passphrases for
-easy pick-up.
+This script renews certificates issued by a local certificate authority \(CA\). Optionally the certificates are exported with individual passphrases for easy pick-up.
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script:
 
-    $ScriptInstallUpdate certificate-renew-issued;
+```text
+$ScriptInstallUpdate certificate-renew-issued;
+```
 
-Configuration
--------------
+## Configuration
 
-The configuration goes to `global-config-overlay`, there is just one
-parameter:
+The configuration goes to `global-config-overlay`, there is just one parameter:
 
 * `CertRenewPass`: an array holding individual passphrases for certificates
 
-Usage and invocation
---------------------
+## Usage and invocation
 
 Run the script to renew certificates issued from a local CA.
 
-    / system script run certificate-renew-issued;
+```text
+/ system script run certificate-renew-issued;
+```
 
-Only scripts with a remaining lifetime of three weeks or less are renewed.
-The old certificate is revoked automatically. If a passphrase for a specific
-certificate is given in `CertRenewPass` the certificate is exported and
-PKCS#12 file (`cert-issued/CN.p12`) can be found on device's storage.
+Only scripts with a remaining lifetime of three weeks or less are renewed. The old certificate is revoked automatically. If a passphrase for a specific certificate is given in `CertRenewPass` the certificate is exported and PKCS\#12 file \(`cert-issued/CN.p12`\) can be found on device's storage.
 
-See also
---------
+## See also
 
 * [Renew certificates and notify on expiration](check-certificates.md)
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](certificate-renew-issued.md#top)
+

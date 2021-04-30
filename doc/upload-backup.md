@@ -1,23 +1,20 @@
-Upload backup to server
-=======================
+# Upload backup to server
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
-This script uploads binary backup (`/ system backup save`) and complete
-configuration export (`/ export terse`) to external server.
+This script uploads binary backup \(`/ system backup save`\) and complete configuration export \(`/ export terse`\) to external server.
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script:
 
-    $ScriptInstallUpdate upload-backup;
+```text
+$ScriptInstallUpdate upload-backup;
+```
 
-Configuration
--------------
+## Configuration
 
 The configuration goes to `global-config-overlay`, these are the parameters:
 
@@ -32,31 +29,32 @@ Also notification settings are required for e-mail and telegram.
 
 ### Issues with SFTP client
 
-The RouterOS SFTP client is picky if it comes to authentication methods.
-I had to disable all but password authentication on server side. For openssh
-edit `/etc/ssh/sshd_config` and add a directive like this, changed for your
-needs:
+The RouterOS SFTP client is picky if it comes to authentication methods. I had to disable all but password authentication on server side. For openssh edit `/etc/ssh/sshd_config` and add a directive like this, changed for your needs:
 
-    Match User mikrotik
-        AuthenticationMethods password
+```text
+Match User mikrotik
+    AuthenticationMethods password
+```
 
-Usage and invocation
---------------------
+## Usage and invocation
 
 Just run the script:
 
-    / system script run upload-backup;
+```text
+/ system script run upload-backup;
+```
 
 Creating a scheduler may be an option:
 
-    / system scheduler add interval=1w name=upload-backup on-event="/ system script run upload-backup;" start-time=09:25:00;
+```text
+/ system scheduler add interval=1w name=upload-backup on-event="/ system script run upload-backup;" start-time=09:25:00;
+```
 
-See also
---------
+## See also
 
 * [Send backup via e-mail](email-backup.md)
 * [Upload backup to Mikrotik cloud](cloud-backup.md)
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](upload-backup.md#top)
+

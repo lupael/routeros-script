@@ -1,31 +1,31 @@
-Play Super Mario theme
-======================
+# Play Super Mario theme
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
 This script plays Super Mario theme.
 
 The hardware needs a beeper.
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script:
 
-    $ScriptInstallUpdate super-mario-theme;
+```text
+$ScriptInstallUpdate super-mario-theme;
+```
 
-Usage and invocation
---------------------
+## Usage and invocation
 
 Just run the script to play:
 
-    / system script run super-mario-theme;
+```text
+/ system script run super-mario-theme;
+```
 
-For extra fun use it for dhcp lease script. :)
+For extra fun use it for dhcp lease script. :\)
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](super-mario-theme.md#top)
+

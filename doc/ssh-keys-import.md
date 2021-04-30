@@ -1,33 +1,33 @@
-Import SSH keys
-===============
+# Import SSH keys
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
-This script imports public SSH keys (files with extension "`pub`") into
-local store for user authentication.
+This script imports public SSH keys \(files with extension "`pub`"\) into local store for user authentication.
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script:
 
-    $ScriptInstallUpdate ssh-keys-import;
+```text
+$ScriptInstallUpdate ssh-keys-import;
+```
 
-Usage and invocation
---------------------
+## Usage and invocation
 
-Copy files with extension "`pub`" containing public SSH keys for your device.
-Then run the script:
+Copy files with extension "`pub`" containing public SSH keys for your device. Then run the script:
 
-    / system script run ssh-keys-import;
+```text
+/ system script run ssh-keys-import;
+```
 
 Starting with an `authorized_keys` file you can split it on a shell:
 
-    while read type key name; do echo $type $key $name > $name.pub; done < authorized_keys
+```text
+while read type key name; do echo $type $key $name > $name.pub; done < authorized_keys
+```
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](ssh-keys-import.md#top)
+

@@ -1,13 +1,10 @@
-Notify about health state
-=========================
+# Notify about health state
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
-This script is run from scheduler periodically, sending notification on
-health related events:
+This script is run from scheduler periodically, sending notification on health related events:
 
 * voltage jumps up or down more than configured threshold
 * power supply failed or recovered
@@ -15,21 +12,22 @@ health related events:
 
 Note that bad initial state will not trigger an event.
 
-Only sensors available in hardware can be checked. See what your
-hardware supports:
+Only sensors available in hardware can be checked. See what your hardware supports:
 
-    / system health print;
+```text
+/ system health print;
+```
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script and create a scheduler:
 
-    $ScriptInstallUpdate check-health;
-    / system scheduler add interval=1m name=check-health on-event="/ system script run check-health;" start-time=startup;
+```text
+$ScriptInstallUpdate check-health;
+/ system scheduler add interval=1m name=check-health on-event="/ system script run check-health;" start-time=startup;
+```
 
-Configuration
--------------
+## Configuration
 
 The configuration goes to `global-config-overlay`, These are the parameters:
 
@@ -38,6 +36,6 @@ The configuration goes to `global-config-overlay`, These are the parameters:
 
 Also notification settings are required for e-mail and telegram.
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](check-health.md#top)
+

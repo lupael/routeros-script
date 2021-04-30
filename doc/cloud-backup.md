@@ -1,22 +1,20 @@
-Upload backup to Mikrotik cloud
-===============================
+# Upload backup to Mikrotik cloud
 
-[◀ Go back to main README](../README.md)
+[◀ Go back to main README](../)
 
-Description
------------
+## Description
 
 This script uploads [binary backup to Mikrotik cloud](https://wiki.mikrotik.com/wiki/Manual:IP/Cloud#Backup).
 
-Requirements and installation
------------------------------
+## Requirements and installation
 
 Just install the script:
 
-    $ScriptInstallUpdate cloud-backup;
+```text
+$ScriptInstallUpdate cloud-backup;
+```
 
-Configuration
--------------
+## Configuration
 
 The configuration goes to `global-config-overlay`, this is the only parameter:
 
@@ -24,23 +22,25 @@ The configuration goes to `global-config-overlay`, this is the only parameter:
 
 Also notification settings are required for e-mail and telegram.
 
-Usage and invocation
---------------------
+## Usage and invocation
 
 Just run the script:
 
-    / system script run cloud-backup;
+```text
+/ system script run cloud-backup;
+```
 
 Creating a scheduler may be an option:
 
-    / system scheduler add interval=1w name=cloud-backup on-event="/ system script run cloud-backup;" start-time=09:20:00;
+```text
+/ system scheduler add interval=1w name=cloud-backup on-event="/ system script run cloud-backup;" start-time=09:20:00;
+```
 
-See also
---------
+## See also
 
 * [Send backup via e-mail](email-backup.md)
 * [Upload backup to server](upload-backup.md)
 
----
-[◀ Go back to main README](../README.md)  
-[▲ Go back to top](#top)
+[◀ Go back to main README](../)  
+[▲ Go back to top](cloud-backup.md#top)
+
